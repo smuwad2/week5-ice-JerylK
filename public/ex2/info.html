@@ -20,11 +20,58 @@
             
         </div>
         <div id="result">
-
         </div>
         <script>
-            function getData() {
- 
+            async function getData() {
+                try {
+                    const response = await axios.get("https://ubiquitous-space-succotash-q7g4r54rxqqw2xwg9-3000.app.github.dev/data", {
+                        params: {
+                            type: document.getElementById("type").value,
+                            limit: document.getElementById("limit").value
+                        }
+                    });
+
+                    const res = document.getElementById("result");
+
+                    while (res.firstChild) {
+                        res.firstChild.remove();
+                    }
+
+                    const header = document.createElement("h2");
+                    header.innerText = response.data.type;
+                    res.appendChild(header)
+                    
+                    const table = document.createElement("table");
+
+                    const tablebody = document.createElement("tbody")
+
+                    let keys = []
+                    const tablehead = document.createElement("tr");
+                    Object.keys(response.data.records[0]).forEach(element => {
+                        keys.push(element);
+                        const tableheader = document.createElement("th");
+                        tableheader.innerText = element;
+                        tablehead.appendChild(tableheader);
+                    });
+                    tablebody.appendChild(tablehead);
+
+                    response.data.records.forEach(element => {
+                        const tablerow = document.createElement("tr");
+                        keys.forEach(key => {
+                            const tabledesc = document.createElement("td");
+                            tabledesc.innerText = element[key];
+                            tablerow.appendChild(tabledesc);
+                        });
+                        tablebody.appendChild(tablerow);
+                    });
+
+                    table.appendChild(tablebody)
+                    table.className = "table";
+                    res.appendChild(table);
+
+                } catch (error) {
+                    console.error(error);
+                }
             }
 
         </script>
